@@ -1,0 +1,76 @@
+{
+    "data":[
+            {
+                "codigo":3011,
+                "nombre":"ICE CIGARRILLOS RUBIOS"
+            },
+            {
+                "codigo":3021,
+                "nombre":"ICE CIGARRILLOS NEGROS"
+            },
+            {
+                "codigo":3031,
+                "nombre":"ICE BEBIDAS ALCOHOLICAS"
+            },
+            {
+                "codigo":3041,
+                "nombre":"ICE - CERVEZA INDUSTRIAL"
+            },
+            {
+                "codigo":3043,
+                "nombre":"ICE - CERVEZA ARTESANAL"
+            },
+            {
+                "codigo":3053,
+                "nombre":"ICE - BEBIDAS GASEOSAS ALTO CONTENIDO DE AZUCAR "
+            },
+            {
+                "codigo":3054,
+                "nombre":"ICE - BEBIDAS GASEOSAS BAJO CONTENIDO DE AZUCAR "
+            },
+            {
+                "codigo":3081,
+                "nombre":"ICE - AVIONES - TRICARES"
+            },
+            {
+                "codigo":3092,
+                "nombre":"ICE - SERVICIOS DE TELEVISION PAGADA"
+            },
+            {
+                "codigo":3093,
+                "nombre":"SERVICIOS DE TELEFONIA"
+            },
+            {
+                "codigo":3101,
+                "nombre":"ICE BEBIDAS ENERGIZANTES"
+            }, 
+            {
+                "codigo":3111,
+                "nombre":"ICE - BEBIBAS NO ALCÓHÓLICAS"
+            },
+            {
+                "codigo":3610,
+                "nombre":"ICE PERFUMES Y AGUAS DE TOCADOR"
+            },    
+            {
+                "codigo":3620,
+                "nombre":"ICE VIDEO-JUEGOS"
+            },
+            {
+                "codigo":3630,
+                "nombre":"ICE ARMAS DE FUEGO, ARMAS DEPORTIVAS"
+            }, 
+            {
+                "codigo":3640,
+                "nombre":"ICE - CUOTAS MEMBRESÍAS"
+            },
+            {
+                "codigo":3670,
+                "nombre":"ICE COCINAS, CALEFONES Y OTROS DE USO DOMÉSTICO A GAS SRI"
+            },    
+            {
+                "codigo":3770,
+                "nombre":"ICE COCINAS, CALEFONES Y OTROS DE USO DOMÉSTICO A GAS SENAE"
+            }
+        ]
+}

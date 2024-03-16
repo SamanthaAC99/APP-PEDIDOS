@@ -1,0 +1,148 @@
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.proforma-item{
+  background-color: #ECF0F1;
+  border-radius: 7px;
+  padding: 0.8rem;
+}
+.proforma-item-p{
+  margin: 0;
+  color: #839192;
+  text-align: right;
+  font-size: medium;
+}
+.proforma-total{
+  border-radius: 7px;
+  padding: 0.8rem;
+  background-color: #6366F1;
+}
+.proforma-total-p{
+  color: white;
+  margin: 0;
+  font-weight: bold;
+  text-align: right;
+  font-size: large;
+}
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+.proforma-container{
+  display: flex;
+  flex-direction: row;
+  border-radius: 5px;
+  width: 100%;
+  height: 80px;
+  border: 1px solid #CCD1D1;
+  justify-content: space-between;
+  align-items: center;
+  
+}
+.proforma-datos{
+  width: 350px;
+  height: 100%;
+  color: #BDC3C7;
+  padding-right: 0.2rem;
+}
+.proforma-titulo{
+  display: flex;
+  background-color: #D5DBDB;
+  justify-content: center;
+  text-align: center;
+  align-items: center;
+  align-self: center;
+  width: 400px;
+  height: 80px;
+  border-radius: 5px;
+
+}
+.proforma-info{
+  text-align: left;
+  padding: 1.2rem;
+  background-color: #f4f4f4;
+  border-radius: 10px;
+  height: 100%;
+}
+
+.texto_factura{
+  font-size: 10px;
+}
+
+
+
+.App-link {
+  color: #61dafb;
+}
+.file-upload-button {
+  display: inline-block;
+  position: relative;
+}
+.header-dash{
+  display: flex;
+  background-color: #f3f3f3;
+  align-items: center;
+  padding: 1.2rem;
+  border-radius: 5px;
+  width: 100%;
+}
+
+
+.file-upload-button input[type="file"] {
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+
+.file-upload-button label {
+  background-color: #6366F1;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.factura-container{
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+}
+.factura-detalles{
+  width: 50%;
+
+}
+.factura-datos{
+  width: 50%;
+}
+
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
