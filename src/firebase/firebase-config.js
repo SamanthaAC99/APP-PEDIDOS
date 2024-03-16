@@ -10,13 +10,12 @@ import { getStorage } from "firebase/storage";
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyDxvBTUvIMPMa9tKWWPWeTY0OKOenumZgg",
-  authDomain: "facturero-app.firebaseapp.com",
-  projectId: "facturero-app",
-  storageBucket: "facturero-app.appspot.com",
-  messagingSenderId: "379660853294",
-  appId: "1:379660853294:web:9f258113e07899b4c4ffbf",
-  measurementId: "G-9MF6L9CBSY"
+  apiKey: "AIzaSyD9_6Yvcfjr-z7umC-vnsgzTQnM2PC0Vbk",
+  authDomain: "conorque-pedidos.firebaseapp.com",
+  projectId: "conorque-pedidos",
+  storageBucket: "conorque-pedidos.appspot.com",
+  messagingSenderId: "1069482426696",
+  appId: "1:1069482426696:web:3aff5d96cd4be3ded7b37d"
 };
 
 // Initialize Firebase

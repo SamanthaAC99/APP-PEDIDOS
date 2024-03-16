@@ -48,9 +48,11 @@ export default function PersonasView(){
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [modalEditar, setModalEditar] = useState(false);
+    const [idValidar, setIdValidar] = useState(false);
     const [totalClientes,setTotalClientes] = useState(0);
     const [modalCliente,setModalCliente] = useState();
     const [tipoIde,setTipoIde] = useState(1);
+    const [tipoIdentificacion,setTipodentificacion] = useState(1);
     const [correos,setCorreos] = useState([]);
     const [correo,setCorreo] = useState();
     const [modalOpciones,setModalOpciones] = useState(false);
@@ -111,14 +113,29 @@ export default function PersonasView(){
         setFormClient(nuevoObjeto)
     };
 
+    // const handleFormId =(event)=>{
+    //     const { name, value } = event.target;
+    //     const nuevoObjeto = { ...formClient };
+    //     nuevoObjeto[name] = value;
+    //     setFormClient(nuevoObjeto)
+    //     if (event.target.value === 4) {
+    //         setIdValidar(true)
+    //     } if (event.target.value === 5) {
+    //         setIdValidar(false)
+    //     }
+    // };
+
+
     const crearUsuario = async ()=>{
         dispatch(setLoading(true));
         let aux_data =  JSON.parse(JSON.stringify(formClient));
         aux_data['correos'] = correos
       
         let id = uuidv4()
+        let code = generateCodigo()
         aux_data['id'] = id
         aux_data['id_origin'] = userState.id
+        aux_data['codigo'] = code
         console.log(aux_data)
         await setDoc(doc(db, "clientes", id),aux_data);
         setModalCliente(false)
@@ -160,6 +177,30 @@ export default function PersonasView(){
 
           setPersonas(filtrados);
     }
+    const handleSearchCodigo = (event) => {
+        let cod = event.target.value;
+        const filtradosc = allClientes.current.filter((elemento1) => {
+            const codigoFilt = elemento1.codigo;
+            return codigoFilt.includes(cod);
+        });
+
+        setPersonas(filtradosc);
+    }
+
+    const handleSearchId = (event) => {
+        let id = event.target.value;
+        const filtradosid = allClientes.current.filter((elemento2) => {
+            const codigoId = elemento2.ci;
+            return codigoId.includes(id);
+        });
+
+        setPersonas(filtradosid);
+    }
+    const generateCodigo = () => {
+        let index = personas.length + 1
+        let codigo = formClient.nombre.slice(-4) + "-" + formClient.ci.substring(0, 4) + "-" + "MEGA" + index.toString()
+        return codigo
+    }
 
     useEffect(() => {
         getData();
@@ -170,32 +211,52 @@ export default function PersonasView(){
             <Container maxWidth="xl">
                 <Grid container spacing={2}>
                     
-                    <Grid item md={12} xs={12}>
+                    {/* <Grid item md={12} xs={12}>
                         <div className="header-dash">
                             Listado de clientes habilitados
                         </div>
-                    </Grid>
+                    </Grid> */}
                     <Grid item xs={12}>
                             <div className="proforma-container">
                                 <div>
-                                    <p className="proforma-titulo" style={{ margin: 0 }}> <strong>TABLAS DE CLIENTES</strong></p>
+                                    <p className="proforma-titulo" style={{ margin: 0 }}> <strong>LISTADO CLIENTES<br /> N° {totalClientes}</strong> <br /></p>
                                 </div>
                                 <div>
-                                    <p style={{ margin: 0 }} className="proforma-datos">Joan David Encarnacion Diaz <strong>1104595671 .- MECDEVS SAS</strong> </p>
+                                    <p style={{ margin: 0 }} className="proforma-datos">CONORQUE CIA LTDA <strong>RUC:01903862</strong> </p>
                                 </div>
                             </div>
                         </Grid>
-                    <Grid item xs={6} md={3} >
+                    {/* <Grid item xs={6} md={3} >
                         <CardClient value={totalClientes} />
-                    </Grid>
-                    <Grid item xs={6} md={9}>
-
-                    </Grid>
-                    <Grid item md={3}>
+                    </Grid> */}
+              
+                    <Grid item md={4}>
                         <FormControl fullWidth variant="filled">
                                 <FilledInput
                                     hiddenLabel
-                                    id="filled-adornment-password"
+                                    id="filled-adornment-codigo"
+                                    type="text"
+                                    size="small"
+                                    onChange={handleSearchCodigo}
+                                    endAdornment={
+                                        <InputAdornment position="end">
+                                            <IconButton
+                                                aria-label="toggle password visibility"
+                                                edge="end"
+                                            >
+                                                <SearchIcon />
+                                            </IconButton>
+                                        </InputAdornment>
+                                    }
+                                    label="Codigo"
+                                />
+                        </FormControl>
+                    </Grid> 
+                    <Grid item md={4}>
+                        <FormControl fullWidth variant="filled">
+                                <FilledInput
+                                    hiddenLabel
+                                    id="filled-adornment-nombre"
                                     type="text"
                                     size="small"
                                     onChange={handleSearch}
@@ -209,10 +270,32 @@ export default function PersonasView(){
                                             </IconButton>
                                         </InputAdornment>
                                     }
-                                    label="Password"
+                                    label="Nombre"
                                 />
                         </FormControl>
-                    </Grid>   
+                    </Grid>
+                    <Grid item md={4}>
+                        <FormControl fullWidth variant="filled">
+                                <FilledInput
+                                    hiddenLabel
+                                    id="filled-adornment-identificacion"
+                                    type="text"
+                                    size="small"
+                                    onChange={handleSearchId}
+                                    endAdornment={
+                                        <InputAdornment position="end">
+                                            <IconButton
+                                                aria-label="toggle password visibility"
+                                                edge="end"
+                                            >
+                                                <SearchIcon />
+                                            </IconButton>
+                                        </InputAdornment>
+                                    }
+                                    label="Identificacion"
+                                />
+                        </FormControl>
+                    </Grid>  
                     <Grid item md={5}>
                     </Grid>   
                     <Grid item md={2}>
@@ -228,6 +311,9 @@ export default function PersonasView(){
                                     <TableRow>
                                         <TableCell align={'left'}>
                                             Item
+                                        </TableCell>
+                                        <TableCell align={'left'}>
+                                            Codigo
                                         </TableCell>
                                         <TableCell align={'center'}>
                                             Nombre
@@ -250,6 +336,9 @@ export default function PersonasView(){
                                                 <TableRow hover role="checkbox" tabIndex={-1} key={index}>
                                                     <TableCell align={"left"}>
                                                         {index + 1}
+                                                    </TableCell>
+                                                    <TableCell align={"center"}>
+                                                        {row.codigo}
                                                     </TableCell>
                                                     <TableCell align={"center"}>
                                                         {row.nombre}
@@ -300,12 +389,16 @@ export default function PersonasView(){
                 <ModalHeader >Registrar Nuevo cliente </ModalHeader>
                 <ModalBody>
                     <Grid container spacing={2}>
+                    <Grid item md={12} xs={12}>
+                            <strong>Código Generado: </strong>{formClient.nombre.slice(-4) + "-" + formClient.ci.substring(0, 4) + "-" + "MEGA" + (personas.length + 1)}
+                        </Grid>
                         <Grid item md={6} xs={12}>
                             <TextField
                                 id="outlined-required"
                                 label="Identificación"
                                 value={formClient.ci}
                                 name="ci"
+                                inputProps={{ maxLength: formClient.tipo_identificacion ==="01"? 13:10}}
                                 onChange={handleFormCliente}
                                 InputProps={{
                                 startAdornment: (
@@ -327,10 +420,8 @@ export default function PersonasView(){
                                                 onChange={handleFormCliente}
                                                 label="Tipo de Persona"
                                             >
-                                                <MenuItem value={'04'}>RUC</MenuItem>
-                                                <MenuItem value={'05'}>Cedula</MenuItem>
-                                                <MenuItem value={'06'}>Pasaporte</MenuItem>
-                                                <MenuItem value={'08'}>Identificación del exterior</MenuItem>
+                                                <MenuItem value={'01'}>RUC</MenuItem>
+                                                <MenuItem value={'02'}>Cedula</MenuItem>
                                             </Select>
                             </FormControl>
                         </Grid>
@@ -481,8 +572,6 @@ export default function PersonasView(){
                                             >
                                                 <MenuItem value={'04'}>RUC</MenuItem>
                                                 <MenuItem value={'05'}>Cedula de identidad</MenuItem>
-                                                <MenuItem value={'06'}>Pasaporte</MenuItem>
-                                                <MenuItem value={'08'}>Identificación del exterior</MenuItem>
                                             </Select>
                             </FormControl>
                         </Grid>

@@ -40,34 +40,7 @@ export const items = [
     )
   },
   {
-    title: 'Servicios',
-    path: 'servicios',
-    icon: (
-      <SvgIcon fontSize="small">
-        <EngineeringIcon />
-      </SvgIcon>
-    )
-  },
-  {
-    title: 'Proformas',
-    path: 'proformas',
-    icon: (
-      <SvgIcon fontSize="small">
-        <DescriptionIcon />
-      </SvgIcon>
-    )
-  },
-  {
-    title: 'Tabla de Proformas',
-    path: 'tablas_proformas',
-    icon: (
-      <SvgIcon fontSize="small">
-        <ListAltIcon/>
-      </SvgIcon>
-    )
-  },
-  {
-    title: 'Facturar',
+    title: 'Pedidos',
     path: 'facturador',
     icon: (
       <SvgIcon fontSize="small">
@@ -76,7 +49,7 @@ export const items = [
     )
   },
   {
-    title: 'Tabla de Facturas',
+    title: 'Tabla de Pedidos',
     path: 'tablas_facturas',
     icon: (
       <SvgIcon fontSize="small">
