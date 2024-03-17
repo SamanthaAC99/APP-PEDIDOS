@@ -94,7 +94,7 @@ export default function FacturasView() {
     const [iva,setIva] = useState(0.00);
     const [total,setTotal] = useState(0.00);
     const [subZero,setSubZero] = useState(0.00);
-    const [subNoIva,setSubNoIva] = useState(0.00);
+    const [subQuince,setSubQuince] = useState(0.00);
     const [subIva,setSubIva] = useState(0.00);
     const [ice,setIce] = useState(0.00)
     const allproducts = useRef([{}]);
@@ -166,27 +166,22 @@ export default function FacturasView() {
         })
    
         let aux_subtotal = 0.0
-        let aux_iva = 0.0
+        let aux_iva= 0.0
         let const_iva = 0.12
         let aux_zero = 0.0
-        let aux_noiva = 0.0
-        let aux_totaliva = 0.0
+        let aux_quince = 0.0
+        let aux_trece = 0.0
         aux_data.forEach((item)=>{
             aux_subtotal = (parseFloat(item.valor_unitario)*parseFloat(item['cantidad'])) + aux_subtotal
             if(item.tarifa_iva === 1){
-                const_iva = 0.00
-                aux_zero = (parseFloat(item.valor_unitario)*parseFloat(item['cantidad'])) + aux_zero
+                const_iva = 0.13
+                aux_trece = (parseFloat(item.valor_unitario)*parseFloat(item['cantidad'])) + aux_trece
             }else if(item.tarifa_iva === 2){
-                const_iva = 0.12
-                aux_totaliva =  (parseFloat(item.valor_unitario)*parseFloat(item['cantidad'])) + aux_totaliva
-            }else if(item.tarifa_iva === 3){
-                const_iva = 0.00
-            }else if(item.tarifa_iva === 4){
-                const_iva = 0.00
-                aux_noiva = (parseFloat(item.valor_unitario)*parseFloat(item['cantidad'])) + aux_noiva
+                const_iva = 0.15
+                aux_quince =  (parseFloat(item.valor_unitario)*parseFloat(item['cantidad'])) + aux_quince
             }else{
-                const_iva = 0.08
-                aux_totaliva =  (parseFloat(item.valor_unitario)*parseFloat(item['cantidad'])) + aux_totaliva
+                const_iva = 0.00
+                aux_zero =  (parseFloat(item.valor_unitario)*parseFloat(item['cantidad'])) + aux_zero
             }
             aux_iva = ((parseFloat(item.valor_unitario)*parseFloat(item['cantidad']))*const_iva) + aux_iva;
             console.log(aux_iva)
@@ -194,8 +189,8 @@ export default function FacturasView() {
         setIva(aux_iva);
         setSubTotal(aux_subtotal)
         setSubZero(aux_zero)
-        setSubNoIva(aux_noiva)
-        setSubIva(aux_totaliva)
+        setSubQuince(aux_quince)
+        setSubIva(aux_trece)
         setTotal(aux_iva+aux_subtotal)
 
         setProductos(aux_data)
@@ -298,30 +293,23 @@ export default function FacturasView() {
 
     const agregarProductos =()=>{
         const seleccionados = allItems.current.filter(item => item['select'] === true);
-        const servicios = allservices.current.filter(item => item['select'] === true);
-        const datos_unidos = seleccionados.concat(servicios)
         let aux_subtotal = 0.0
-        let aux_iva = 0.0
+        let aux_iva= 0.0
         let const_iva = 0.12
         let aux_zero = 0.0
-        let aux_noiva = 0.0
-        let aux_totaliva = 0.0
-            datos_unidos.forEach((item)=>{
+        let aux_quince = 0.0
+        let aux_trece = 0.0
+        seleccionados.forEach((item)=>{
                 aux_subtotal = parseFloat(item.valor_unitario) + aux_subtotal
                 if(item.tarifa_iva === 1){
-                    const_iva = 0.00
-                    aux_zero = parseFloat(item.valor_unitario) + aux_zero
+                    const_iva = 0.13
+                    aux_trece = parseFloat(item.valor_unitario) + aux_trece
                 }else if(item.tarifa_iva === 2){
-                    const_iva = 0.12
-                    aux_totaliva =  parseFloat(item.valor_unitario) + aux_totaliva
-                }else if(item.tarifa_iva === 3){
-                    const_iva = 0.00
-                }else if(item.tarifa_iva === 4){
-                    const_iva = 0.00;
-                    aux_noiva = parseFloat(item.valor_unitario) + aux_noiva;
-                }else{
-                    const_iva = 0.08
-                    aux_totaliva =  parseFloat(item.valor_unitario) + aux_totaliva
+                    const_iva = 0.15
+                    aux_quince =  parseFloat(item.valor_unitario) + aux_quince
+                } else {
+                    const_iva = 0
+                    aux_zero= parseFloat(item.valor_unitario) + aux_zero
                 }
                 aux_iva = (parseFloat(item.valor_unitario)*const_iva) + aux_iva;
                 console.log(aux_iva)
@@ -329,11 +317,11 @@ export default function FacturasView() {
             setIva(aux_iva.toFixed(2));
             setSubTotal(aux_subtotal.toFixed(2));
             setSubZero(aux_zero.toFixed(2));
-            setSubNoIva(aux_noiva.toFixed(2));
-            setSubIva(aux_totaliva.toFixed(2));
+            setSubQuince(aux_quince.toFixed(2));
+            setSubIva(aux_trece.toFixed(2));
             let aux_total1 =aux_iva+aux_subtotal
             setTotal(aux_total1.toFixed(2))
-            setProductos(datos_unidos);
+            setProductos(seleccionados);
             setModalProducto(false);
         }
     const eliminarProducto = async (_data) => {
@@ -368,7 +356,7 @@ export default function FacturasView() {
         setIva(aux_iva.toFixed(2));
         setSubTotal(aux_subtotal.toFixed(2))
         setSubZero(aux_zero.toFixed(2))
-        setSubNoIva(aux_noiva.toFixed(2))
+        setSubQuince(aux_noiva.toFixed(2))
         setSubIva(aux_totaliva.toFixed(2))
         let aux_total1 =aux_iva+aux_subtotal
         setTotal(aux_total1.toFixed(2))
@@ -409,45 +397,7 @@ export default function FacturasView() {
         setCurrentCliente(_data)
         setModalCliente(false)
     }
-    const agregarServicios = ()=>{
-        let seleccionados = allItems.current.filter(item => item['select'] === true);
-        let servicios_seleccionado = allservices.current.filter(item => item['select'] === true);
-        let datos_unidos = seleccionados.concat(servicios_seleccionado);
-        let aux_subtotal = 0.0;
-        let aux_iva = 0.0;
-        let const_iva = 0.12;
-        let aux_zero = 0.0;
-        let aux_noiva = 0.0;
-        let aux_totaliva = 0.0;
-        datos_unidos.forEach((item)=>{
-            aux_subtotal = parseFloat(item.valor_unitario) + aux_subtotal;
-            if(item.tarifa_iva === 1){
-                const_iva = 0.00;
-                aux_zero = parseFloat(item.valor_unitario) + aux_zero;
-            }else if(item.tarifa_iva === 2){
-                const_iva = 0.12;
-                aux_totaliva =  parseFloat(item.valor_unitario) + aux_totaliva;
-            }else if(item.tarifa_iva === 3){
-                const_iva = 0.00; 
-                
-            }else if(item.tarifa_iva === 4){
-                const_iva = 0.00;
-                aux_noiva = parseFloat(item.valor_unitario) + aux_noiva;
-            }else{
-                const_iva = 0.08;
-                aux_totaliva =  parseFloat(item.valor_unitario) + aux_totaliva;
-            }
-            aux_iva = (parseFloat(item.valor_unitario)*const_iva) + aux_iva;
-        })
-        setIva(aux_iva);
-        setSubTotal(aux_subtotal);
-        setSubZero(aux_zero);
-        setSubNoIva(aux_noiva);
-        setSubIva(aux_totaliva);
-        setTotal(aux_iva+aux_subtotal);
-        setProductos(datos_unidos);
-        setModalServicio(false);
-    }
+    
     const agregarFactura = async(_case)=>{
         dispatch(setLoading(true));
         let aux_productos =  JSON.parse(JSON.stringify(productos));
@@ -474,11 +424,11 @@ export default function FacturasView() {
             let zero = 0
             aux_productos.forEach((item)=>{
                 if(item.tipo_impuesto === 2 ){
-                    if(item.tarifa_iva === 2){
+                    if(item.tarifa_iva === 1){
                         twelve += parseFloat(item.valor_unitario)
-                    }else if(item.tarifa_iva === 0 ){
-                        zero += parseFloat(item.valor_unitario)
                     }
+                }else if(item.tipo_impuesto === 3 ){
+                    zero += parseFloat(item.valor_unitario)
                 }
             })
             if(twelve !== 0 ){
@@ -526,17 +476,16 @@ export default function FacturasView() {
                 tipo_emision:1,
                 
             }
-            let clave_acceso = generarClavedeAcceso(data_clave)
             var fechaFormateada = dia + '/' + mes + '/' + año;
             let number_proforma =  `${userState.bill_code1}-${userState.bill_code2}-${userState.bill_code3}`
             let contabilidad_txt = userState.contabilidad ?  "SI":"NO"
             factura_data = {
                 products: products_formated,
                 profile: userState.profile,
-                profile_url: userState.profile_url,  
+                // profile_url: userState.profile_url,  
                 nombre: currentCliente.nombre,
                 fecha: fechaFormateada,
-                sub_siniva:subNoIva,
+                sub_quince:subQuince,
                 sub_iva:subIva,
                 sub_total:subtotal,
                 sub_zero:subZero,
@@ -562,7 +511,6 @@ export default function FacturasView() {
                 direccion:currentCliente.direccion,
                 observaciones:currentCliente.observaciones,
                 razon:currentCliente.nombre,
-                clave_acceso:clave_acceso,
                 nombre_facturador:userState.razon,
                 punto_emision: userState.bill_code2,
                 nombre_comercial:currentEstablecimiento.nombreComercial
@@ -571,14 +519,8 @@ export default function FacturasView() {
             console.log(factura_data)
         }
         if(_case === 1 ){
-            generarFacturaXML(factura_data);
-            // let new_code = incrementarContador(user_copy['bill_code3']);
-            // user_copy['bill_code3'] = new_code;
-            // await setDoc(doc(db, "facturas", id), factura_data);
-            // dispatch(updateNumberBill(new_code));
-            // await updateDoc(user_ref, user_copy);
-            // setProductos([]);
-            // setCurrentCliente(consumidor_final);
+            await setDoc(doc(db, "facturas", id), factura_data);
+            setProductos([]);
             dispatch(setLoading(false));
         }else{
             generarFacturaPDF(factura_data);
@@ -685,9 +627,7 @@ export default function FacturasView() {
                     <Grid item xs={12} md={2}>
                         <Button sx={{ width: 190 }} variant="contained" onClick={() => { abrirModalProductos() }} >Agregar Producto</Button>
                     </Grid>
-                    <Grid item xs={12} md={2}>
-                        <Button sx={{ width: 190 }} variant="contained" onClick={() => { abrirModalServicios() }} >Agregar Servicio</Button>
-                    </Grid>
+                 
                     <Grid item xs={12} md={12}>
                         <TableContainer sx={{ maxHeight: 440 }}>
                             <Table stickyHeader aria-label="sticky table">
@@ -706,7 +646,7 @@ export default function FacturasView() {
                                             Precio
                                         </TableCell>
                                         <TableCell align={'center'}>
-                                            Desc
+                                            Iva
                                         </TableCell>
                                         <TableCell align={'center'}>
                                             Total
@@ -742,8 +682,10 @@ export default function FacturasView() {
                                                     <TableCell align={"center"}>
                                                         {parseFloat(row.valor_unitario)}
                                                     </TableCell>
-                                                    <TableCell align={"center"}>
-                                                        {0}%
+                                                    <TableCell align={"center"}> 
+                                                       <p style={{display:row.tarifa_iva===1?"block":"none"}}>13%</p>
+                                                       <p style={{display:row.tarifa_iva===2?"block":"none"}}>15%</p>
+                                                       <p style={{display:row.tarifa_iva===0?"block":"none"}}>0%</p>
                                                     </TableCell>
                                                     <TableCell align={"center"}>
                                                         {parseFloat(row.valor_unitario)*parseFloat(row.cantidad)}
@@ -809,19 +751,13 @@ export default function FacturasView() {
                                  <p className="proforma-item-p" >Subtotal sin impuestos: ${subtotal}</p>
                             </div>
                             <div className="proforma-item">
-                                 <p className="proforma-item-p" >Subtotal IVA: ${subIva}</p>
-                            </div>
-                            <div className="proforma-item">
                                  <p className="proforma-item-p" >Subtotal 0%: ${subZero}</p>
                             </div>
                             <div className="proforma-item">
-                                 <p className="proforma-item-p" >Subtotal no objeto de IVA: ${subNoIva}</p>
+                                 <p className="proforma-item-p" >Subtotal 13%: ${subIva}</p>
                             </div>
                             <div className="proforma-item">
-                                 <p className="proforma-item-p" >Total descuento: $0.00</p>
-                            </div>
-                            <div className="proforma-item">
-                                 <p className="proforma-item-p" >ICE: $0.00</p>
+                                 <p className="proforma-item-p" >Subtotal 15%: ${subQuince}</p>
                             </div>
                             <div className="proforma-item">
                                  <p className="proforma-item-p" >IVA: ${iva}</p>
@@ -839,11 +775,11 @@ export default function FacturasView() {
                     <Grid item xs={12} md={8}>
                         
                         </Grid>
-                        <Grid item xs={6} md={2}>
+                        {/* <Grid item xs={6} md={2}>
                         <Button color="rojo" variant="contained" onClick={()=>{agregarFactura(2)}} >
                                 Generar PDF
                             </Button>
-                        </Grid>
+                        </Grid> */}
                         <Grid item xs={6} md={2}>
                             <Button color="success" variant="contained" onClick={()=>{agregarFactura(1)}} >
                                 Generar Factura
@@ -1055,80 +991,7 @@ export default function FacturasView() {
                     </Button>
                 </ModalFooter>
             </Modal>
-            <Modal isOpen={modalServicio} size="lg" >
-                <ModalHeader>Agregar Servicio</ModalHeader>
-                <ModalBody>
-                <Grid item xs={12}>
-                    <TableContainer sx={{ maxHeight: 440 }}>
-                        <Table stickyHeader aria-label="sticky table">
-                            <TableHead>
-                                <TableRow>
-                                        <TableCell align={'left'}>
-                                            Item
-                                        </TableCell>
-                                        <TableCell align={'center'}>
-                                            Descripcion
-                                        </TableCell>
-                                        <TableCell align={'center'}>
-                                            Precio
-                                        </TableCell>
-                                        <TableCell align={'left'}>
-
-                                        </TableCell>
-                                    </TableRow>
-                                    </TableHead>
-                            <TableBody>
-                                {servicios.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                            .map((row, index) => {
-                                                return (
-                                                    <TableRow hover role="checkbox" tabIndex={-1} key={index}>
-                                                        <TableCell align={"left"}>
-                                                            {index + 1}
-                                                        </TableCell>
-                                                        <TableCell align={"center"}>
-                                                            {row.descripcion}
-                                                        </TableCell>
-                                                        <TableCell align={"center"}>
-                                                            {row.valor_unitario}
-                                                        </TableCell>
-
-                                                        <TableCell align={"center"}>
-                                                            <Stack direction="row" spacing={1}>
-                                                                <Checkbox
-                                                                    checked={row['select']}
-                                                                    onClick={()=>{servicioSeleccionado(row)}}
-                                                                    inputProps={{ 'aria-label': 'controlled' }}
-                                                                />
-                                                            </Stack>
-                                                        </TableCell>
-                                                    </TableRow>
-                                                );
-                                            })}
-                                    </TableBody>
-                                </Table>
-                            </TableContainer>
-                            <TablePagination
-                                rowsPerPageOptions={[10, 25, 100]}
-                                component="div"
-                                count={items.length}
-                                rowsPerPage={rowsPerPage}
-                                page={page}
-                                onPageChange={handleChangePage}
-                                onRowsPerPageChange={handleChangeRowsPerPage}
-                            />
-                        </Grid>
-                </ModalBody>
-                <ModalFooter>
-                    <Stack direction="row" spacing={2}>
-                        <Button color="primary" variant="contained" onClick={agregarServicios}>
-                            terminar seleccion
-                        </Button>
-                        <Button color="rojo" variant="contained" onClick={() => { setModalServicio(false) }} >
-                            Cancelar
-                        </Button>
-                    </Stack>
-                </ModalFooter>
-            </Modal>
+            
             <img style={{display:"none"}} id="barcode"/>
         </>
     );

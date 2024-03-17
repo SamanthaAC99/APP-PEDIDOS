@@ -34,7 +34,7 @@ const generarFacturaPDF = async(proforma) => {
     let datos_factura = [
         [
             { content: ``, styles: { halign: 'left',lineWidth:0 } },
-            { content: 'SUBTOTAL IVA',styles: { halign: 'left',cellWidth:40 ,fontSize:8 ,fontStyle:"bold"} },
+            { content: 'SUBTOTAL',styles: { halign: 'left',cellWidth:40 ,fontSize:8 ,fontStyle:"bold"} },
             { content: `${proforma.sub_iva}`, styles: { halign: 'left',cellWidth:20 ,fontSize:8 } },
         ],
         [
@@ -44,23 +44,13 @@ const generarFacturaPDF = async(proforma) => {
         ],
         [
             { content: ``, styles: { halign: 'left',lineWidth:0  } },
-            { content: 'SUBTOTAL No sujeto IVA',styles: { halign: 'left',cellWidth:40 ,fontSize:8 ,fontStyle:"bold"} },
-            { content: `${proforma.sub_total}`, styles: { halign: 'left',cellWidth:20 ,fontSize:8 } },
+            { content: 'SUBTOTAL 13%',styles: { halign: 'left',cellWidth:40 ,fontSize:8 ,fontStyle:"bold"} },
+            { content: `${proforma.sub_iva}`, styles: { halign: 'left',cellWidth:20 ,fontSize:8 } },
         ],
         [
             { content: ``, styles: { halign: 'left',lineWidth:0  } },
-            { content: 'SUBTOTAL SIN IMPUESTOS',styles: { halign: 'left',cellWidth:40 ,fontSize:8 ,fontStyle:"bold"} },
-            { content: `${proforma.sub_siniva}`, styles: { halign: 'left',cellWidth:20 ,fontSize:8  } },
-        ],
-        [
-            { content: ``, styles: { halign: 'left',lineWidth:0  } },
-            { content: 'DESCUENTO',styles: { halign: 'left',cellWidth:40 ,fontSize:8 ,fontStyle:"bold"} },
-            { content: `${proforma.descuento}`, styles: { halign: 'left',cellWidth:20,fontSize:8 } },
-        ],
-        [
-            { content: ``, styles: { halign: 'left',lineWidth:0  } },
-            { content: 'ICE',styles: { halign: 'left',cellWidth:40,fontSize:8 ,fontStyle:"bold"} },
-            { content: `${proforma.ice}`, styles: { halign: 'left',cellWidth:20,fontSize:8  } },
+            { content: 'SUBTOTAL 15%',styles: { halign: 'left',cellWidth:40 ,fontSize:8 ,fontStyle:"bold"} },
+            { content: `${proforma.sub_quince}`, styles: { halign: 'left',cellWidth:20 ,fontSize:8  } },
         ],
         [
             { content: ``, styles: { halign: 'left',lineWidth:0  } },
@@ -69,7 +59,7 @@ const generarFacturaPDF = async(proforma) => {
         ],
         [
             { content: ``, styles: { halign: 'left',lineWidth:0  } },
-            { content: 'VALOR TOTAL',styles: { halign: 'left',cellWidth:40,fontSize:8 ,fontStyle:"bold"} },
+            { content: 'TOTAL',styles: { halign: 'left',cellWidth:40,fontSize:8 ,fontStyle:"bold"} },
             { content: `${proforma.total}`, styles: { halign: 'left',cellWidth:20,fontSize:8  } },
         ],
     ]

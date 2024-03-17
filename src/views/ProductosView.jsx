@@ -14,7 +14,7 @@ import IconButton from '@mui/material/IconButton';
 import { collection, query, onSnapshot, doc, setDoc, updateDoc, deleteDoc } from "firebase/firestore";
 import { db } from "../firebase/firebase-config";
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
-
+import BarcodeView from "../components/bar-code";
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import Button from '@mui/material/Button';
@@ -62,6 +62,7 @@ export default function ProductosView() {
     const [valorUnitario, setValorUnitario] = useState('');
     const [unidadMedida, setUnidadMedida] = useState('');
     const [activo, setActivo] = useState(true);
+    const [Flagiva,setFlagiva] = useState(false);
     const [stock, setStock] = useState('');
     const [establecimientos, setEstablecimientos] = useState({});
     const [inventario, setInventario] = useState(false);
@@ -178,14 +179,21 @@ export default function ProductosView() {
     const agregarProductos = async () => {
         dispatch(setLoading(true));
         let id = uuidv4();
+      
         console.log(id);
+        let barco = '';
+        const caracteres = '0123456789'; 
+        for (let i = 0; i < 10; i++) {
+            const indiceAleatorio = Math.floor(Math.random() * caracteres.length);
+            barco += caracteres.charAt(indiceAleatorio);
+        }
         let new_producto = {
-            codigo_principal: codigoPrincipal,
+            codigo_principal: barco,
             codigo_auxiliar: codigoAuxiliar,
             descripcion: descripcion.toUpperCase(),
             valor_unitario: valorUnitario,
             unidad_medida: unidadMedida,
-            tarifa_iva: tarifa,
+            tarifa_iva: tipoImpuesto===1?tarifa:0,
             ice: ice,
             activo: activo,
             establecimiento: establecimiento,
@@ -205,6 +213,7 @@ export default function ProductosView() {
         await setDoc(doc(db, "productos", id), new_producto);
         dispatch(setLoading(false));
         setModalProducto(false);
+        console.log(new_producto)
 
     }
 
@@ -248,28 +257,24 @@ export default function ProductosView() {
             <Container maxWidth="xl">
                 <Grid container spacing={2}>
                    
-                    <Grid item md={12} xs={12}>
+                    {/* <Grid item md={12} xs={12}>
                         <div className="header-dash">
                             Listado de productos habilitados
                         </div>
-                    </Grid>
+                    </Grid> */}
                     <Grid item xs={12}>
                             <div className="proforma-container">
                                 <div>
-                                    <p className="proforma-titulo" style={{ margin: 0 }}> <strong>TABLAS DE PRODUCTOS</strong></p>
+                                    <p className="proforma-titulo" style={{ margin: 0 }}> <strong>LISTADO PRODUCTOS<br /> N° {totalProducts}</strong> <br /></p>
                                 </div>
                                 <div>
-                                    <p style={{ margin: 0 }} className="proforma-datos">Joan David Encarnacion Diaz <strong>1104595671 .- MECDEVS SAS</strong> </p>
+                                    <p style={{ margin: 0 }} className="proforma-datos">CONORQUE CIA LTDA <strong>RUC:01903862</strong> </p>
                                 </div>
                             </div>
                         </Grid>
-                    <Grid item md={3} xs={6}>
+                    {/* <Grid item md={3} xs={6}>
                         <CardProduct value={totalProducts} />
-                    </Grid>
-                    <Grid item xs={9}>
-
-                    </Grid>
-
+                    </Grid> */}
                     <Grid item xs={12} md={3}>
                         <FormControl fullWidth variant="filled">
                             <FilledInput
@@ -310,11 +315,10 @@ export default function ProductosView() {
                                 <MenuItem onClick={closeMenu}>Logout</MenuItem>
                             </Menu> */}
                     </Grid>
-                    <Grid item xs={12} md={2}>
-                    </Grid>
-                    <Grid item xs={12} md={2}>
+                    
+                    {/* <Grid item xs={12} md={2}>
                         <Button fullWidth color="anaranjado1" variant="contained" onClick={() => { setModalCategorias(true) }} startIcon={<AddIcon />} >Categorias</Button>
-                    </Grid>
+                    </Grid> */}
                     <Grid item xs={6} md={2}>
                         <Button fullWidth variant="contained" onClick={() => { setModalProducto(true) }} startIcon={<AddIcon />} >Agregar Producto</Button>
                     </Grid>
@@ -364,7 +368,7 @@ export default function ProductosView() {
                                                         {row.valor_unitario}
                                                     </TableCell>
                                                     <TableCell align={"center"}>
-                                                        {row.codigo_principal}
+                                                      <BarcodeView value={row.codigo_principal}/>
                                                     </TableCell>
                                                     <TableCell align={"center"}>
                                                         {row.stock}
@@ -417,7 +421,7 @@ export default function ProductosView() {
                         </Box>
                         <CustomTabPanel value={value} index={0}>
                             <Grid container spacing={2}>
-                                <Grid item md={8} xs={12}>
+                                {/* <Grid item md={8} xs={12}>
                                     <TextField
                                         required
                                         id="outlined-required"
@@ -428,7 +432,7 @@ export default function ProductosView() {
                                             setCodigoPrincipal(event.target.value);
                                         }}
                                     />
-                                </Grid>
+                                </Grid> */}
                                 <Grid item md={4} xs={6}>
                                     <FormControl fullWidth variant="filled">
                                         <InputLabel htmlFor="filled-adornment-password">Tipo de Impuesto</InputLabel>
@@ -438,8 +442,8 @@ export default function ProductosView() {
                                             label="Tipo de Persona"
                                             onChange={(e)=>{setTipoImpuesto(e.target.value)}}
                                         >
-                                            <MenuItem value={2}>IVA</MenuItem>
-                                            <MenuItem value={3}>ICE</MenuItem>
+                                            <MenuItem value={1}>IVA</MenuItem>
+                                            <MenuItem value={2}>SIN IVA</MenuItem>
                                            
                                         </Select>
                                     </FormControl>
@@ -488,18 +492,15 @@ export default function ProductosView() {
                                             value={tarifa}
                                             label="Tipo de Persona"
                                             onChange={(e)=>{setTarifa(e.target.value)}}
-                                            disabled={tipoImpuesto === 3? true:false}
+                                            disabled={tipoImpuesto === 1? false:true}
                                         >
-                                            <MenuItem value={0}>0%</MenuItem>
-                                            <MenuItem value={2}>12%</MenuItem>
-                                            <MenuItem value={3}>14%</MenuItem>
-                                            <MenuItem value={6}>No Objeto de impuesto</MenuItem>
-                                            <MenuItem value={7}>Extento de IVA</MenuItem>
-                                            <MenuItem value={8}>IVA Diferenciado</MenuItem>
+                                            <MenuItem value={1}>13%</MenuItem>
+                                            <MenuItem value={2}>15%</MenuItem>
+
                                         </Select>
                                     </FormControl>
                                 </Grid>
-                                <Grid item md={12} xs={6}>
+                                {/* <Grid item md={12} xs={6}>
                                     <Autocomplete
                                         disablePortal
                                         id="combo-box-demo"
@@ -515,7 +516,7 @@ export default function ProductosView() {
                                         fullWidth
                                         renderInput={(params) => <TextField {...params} label="Tarifado ICE" />}
                                     />
-                                </Grid>
+                                </Grid> */}
                                 
                             </Grid>
                         </CustomTabPanel>
