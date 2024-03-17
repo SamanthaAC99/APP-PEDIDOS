@@ -13,7 +13,7 @@ import {
   useMediaQuery
 } from '@mui/material';
 
-import logo from "../assets/logofinal.png"
+import logo from "../assets/conorque.jpeg"
 import { items } from './config';
 import { items_views } from './config-views';
 import { SideNavItem } from './side-nav-item';
@@ -140,13 +140,13 @@ export const SideNav = (props) => {
             color="neutral.100"
             variant="subtitle2"
           >
-           Quieres Conocer Nuestros Productos?
+           POSTULANTE SAMANTHA AVILA
           </Typography>
           <Typography
             color="neutral.500"
             variant="body2"
           >
-            Visita nuestro Sitio Web
+            MECATRONICA
           </Typography>
       
           <Button
@@ -157,12 +157,12 @@ export const SideNav = (props) => {
               </SvgIcon>
             )}
             fullWidth
-            href="https://material-kit-pro-react.devias.io/"
+            href="https://drive.google.com/file/d/1CKdIx5mFX0_1GvjMJAwM20MPe28Ttj5T/view?usp=drivesdk"
             sx={{ mt: 2 }}
             target="_blank"
             variant="contained"
           >
-            Pagina Official
+            DATOS PERSONALES
           </Button>
         </Box>
       </Box>

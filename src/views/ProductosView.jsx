@@ -46,6 +46,7 @@ import ArticleIcon from '@mui/icons-material/Article';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 import Paper from '@mui/material/Paper';
+import Swal from 'sweetalert2';
 import { updateCategorias } from "../features/auth/userSlice";
 export default function ProductosView() {
     const [productos, setProductos] = useState([])
@@ -53,7 +54,7 @@ export default function ProductosView() {
     const userState = useSelector(state => state.auth);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const dispatch = useDispatch();
-    const [modalOpciones,setModalOpciones] =useState(false);
+    const [modalOpciones, setModalOpciones] = useState(false);
     const [modalProducto, setModalProducto] = useState(false);
     const [modalEditar, setModalEditar] = useState(false);
     const [codigoPrincipal, setCodigoPrincipal] = useState('');
@@ -62,21 +63,21 @@ export default function ProductosView() {
     const [valorUnitario, setValorUnitario] = useState('');
     const [unidadMedida, setUnidadMedida] = useState('');
     const [activo, setActivo] = useState(true);
-    const [Flagiva,setFlagiva] = useState(false);
+    const [Flagiva, setFlagiva] = useState(false);
     const [stock, setStock] = useState('');
     const [establecimientos, setEstablecimientos] = useState({});
     const [inventario, setInventario] = useState(false);
     const [categoria, setCategoria] = useState('');
-    const [categorias,setCategorias] = useState(userState.categorias);
+    const [categorias, setCategorias] = useState(userState.categorias);
     const [establecimiento, setEstablecimiento] = useState(userState.defect_direction);
     const [tarifa, setTarifa] = useState(2);
-    const [modalCategorias,setModalCategorias] = useState(false);
-    const [totalProducts,setTotalProducts] = useState(0);
+    const [modalCategorias, setModalCategorias] = useState(false);
+    const [totalProducts, setTotalProducts] = useState(0);
     const [ice, setIce] = useState({
         codigo: 0,
         nombre: "Ninguno"
     });
-    
+
     const [value, setValue] = useState(0);
     const [param1, setParam1] = useState("")
     const [param2, setParam2] = useState("");
@@ -84,7 +85,7 @@ export default function ProductosView() {
     const [value1, setValue1] = useState("");
     const [value2, setValue2] = useState("");
     const [value3, setValue3] = useState("");
-    const [tipoImpuesto,setTipoImpuesto] = useState(2);
+    const [tipoImpuesto, setTipoImpuesto] = useState(2);
     const allproducts = useRef([{}]);
     const [currentProducto, setCurrentProducto] = useState({
         codigo_principal: "",
@@ -106,12 +107,12 @@ export default function ProductosView() {
         value2: "",
         param3: "",
         value3: "",
-        tipo_impuesto:2,
+        tipo_impuesto: 2,
     });
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
 
-    
+
 
 
     const handleChangePage = (event, newPage) => {
@@ -135,16 +136,16 @@ export default function ProductosView() {
         });
         setEstablecimientos(userState.direcciones);
         setEstablecimiento(userState.defect_direction);
-   }
+    }
 
 
-    const agregarCategorias = async() =>{
+    const agregarCategorias = async () => {
         dispatch(setLoading(true));
         let aux_categorias = JSON.parse(JSON.stringify(categorias))
         aux_categorias.push(categoria.toUpperCase())
         const ref_data = doc(db, "usuarios", userState.id);
         await updateDoc(ref_data, {
-            categorias:aux_categorias,
+            categorias: aux_categorias,
         });
         dispatch(updateCategorias(aux_categorias))
         setCategorias(aux_categorias)
@@ -152,13 +153,13 @@ export default function ProductosView() {
         dispatch(setLoading(false));
     }
 
-    const eliminarCategoria = async(_data) =>{
+    const eliminarCategoria = async (_data) => {
         dispatch(setLoading(true));
         let aux_categorias = JSON.parse(JSON.stringify(categorias));
-        let data_filtrada = aux_categorias.filter(item=> item !== _data);
+        let data_filtrada = aux_categorias.filter(item => item !== _data);
         const ref_data = doc(db, "usuarios", userState.id);
         await updateDoc(ref_data, {
-            categorias:data_filtrada,
+            categorias: data_filtrada,
         });
         dispatch(updateCategorias(data_filtrada))
         setCategorias(data_filtrada);
@@ -169,7 +170,7 @@ export default function ProductosView() {
     const handleInventario = (event) => {
         setInventario(event.target.value);
     };
- 
+
 
     const abrirModalEditar = (item) => {
         setModalEditar(true);
@@ -179,10 +180,10 @@ export default function ProductosView() {
     const agregarProductos = async () => {
         dispatch(setLoading(true));
         let id = uuidv4();
-      
+
         console.log(id);
         let barco = '';
-        const caracteres = '0123456789'; 
+        const caracteres = '0123456789';
         for (let i = 0; i < 10; i++) {
             const indiceAleatorio = Math.floor(Math.random() * caracteres.length);
             barco += caracteres.charAt(indiceAleatorio);
@@ -193,7 +194,7 @@ export default function ProductosView() {
             descripcion: descripcion.toUpperCase(),
             valor_unitario: valorUnitario,
             unidad_medida: unidadMedida,
-            tarifa_iva: tipoImpuesto===1?tarifa:0,
+            tarifa_iva: tipoImpuesto === 1 ? tarifa : 0,
             ice: ice,
             activo: activo,
             establecimiento: establecimiento,
@@ -207,7 +208,7 @@ export default function ProductosView() {
             inventario: inventario,
             stock: stock,
             id: id,
-            producto:true,
+            producto: true,
             tipo_impuesto: tipoImpuesto,
         }
         await setDoc(doc(db, "productos", id), new_producto);
@@ -234,7 +235,7 @@ export default function ProductosView() {
         nuevoObjeto[name] = value;
         setCurrentProducto(nuevoObjeto);
     };
-    const handleSearch=(event)=>{
+    const handleSearch = (event) => {
         let textoMinusculas = event.target.value.toLowerCase();
         const filtrados = allproducts.current.filter((elemento) => {
             const nombreMinusculas = elemento.descripcion.toLowerCase();
@@ -243,7 +244,25 @@ export default function ProductosView() {
         setProductos(filtrados);
     }
 
+    const handleSearchId = (event) => {
+        const inputValue = event.target.value;
+        const isValidInput = /^[0-9]*$/.test(inputValue);
 
+        if (isValidInput) {
+            const filtradosid = allproducts.current.filter((elemento2) => {
+                const codigoId = elemento2.codigo_principal.toString();
+                return codigoId.includes(inputValue);
+            });
+            setProductos(filtradosid);
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Por favor, ingrese solo números',
+            });
+            console.log('Ingrese solo números');
+        }
+    };
 
     const handleChangeTab = (event, newValue) => {
         setValue(newValue);
@@ -256,30 +275,42 @@ export default function ProductosView() {
         <>
             <Container maxWidth="xl">
                 <Grid container spacing={2}>
-                   
+
                     {/* <Grid item md={12} xs={12}>
                         <div className="header-dash">
                             Listado de productos habilitados
                         </div>
                     </Grid> */}
                     <Grid item xs={12}>
-                            <div className="proforma-container">
-                                <div>
-                                    <p className="proforma-titulo" style={{ margin: 0 }}> <strong>LISTADO PRODUCTOS<br /> N° {totalProducts}</strong> <br /></p>
-                                </div>
-                                <div>
-                                    <p style={{ margin: 0 }} className="proforma-datos">CONORQUE CIA LTDA <strong>RUC:01903862</strong> </p>
-                                </div>
+                        <div className="proforma-container">
+                            <div>
+                                <p className="proforma-titulo" style={{ margin: 0 }}> <strong>LISTADO PRODUCTOS<br /> N° {totalProducts}</strong> <br /></p>
                             </div>
-                        </Grid>
+                            <div>
+                                <p style={{ margin: 0 }} className="proforma-datos">CONORQUE CIA LTDA <strong>RUC:01903862</strong> </p>
+                            </div>
+                        </div>
+                    </Grid>
                     {/* <Grid item md={3} xs={6}>
                         <CardProduct value={totalProducts} />
                     </Grid> */}
-                    <Grid item xs={12} md={3}>
+                          
+                          <Grid container item xs={5} justifyContent="center" spacing={2}>
+                        <Grid container item xs={12} md={7} justifyContent="center">
+                            <Button style={{ width: "100%", height: "50%" }} variant="contained" startIcon={<AddIcon />} onClick={() => { setModalProducto(true) }}>Agregar Cliente</Button>
+                        </Grid>
+                        {/* <Grid container item xs={12} md={6} justifyContent="center">
+                            <Button style={{ width: "100%", height: "50%" }} variant="contained" startIcon={<SettingsIcon />} color="gris" onClick={() => { setModalOpciones(true) }}>Opciones</Button>
+                        </Grid> */}
+                    </Grid>
+                    
+                    <Grid container item xs={7} justifyContent="center" spacing={2}>
+                    <Grid item xs={12} md={11}>
                         <FormControl fullWidth variant="filled">
+                            <InputLabel htmlFor="filled-adornment-codigo" style={{ textAlign: "center", width: "100%" }}>BUSCAR POR ITEM</InputLabel>
                             <FilledInput
                                 hiddenLabel
-                                id="filled-adornment-password"
+                                id="filled-nombre"
                                 type="text"
                                 size="small"
                                 onChange={handleSearch}
@@ -293,41 +324,35 @@ export default function ProductosView() {
                                         </IconButton>
                                     </InputAdornment>
                                 }
-                                label="Password"
+                                label="Nombre"
                             />
                         </FormControl>
                     </Grid>
-                    <Grid item xs={12} md={1}>
-                        {/* <IconButton aria-label="delete" onClick={handleClick} size="large">
-                            <FilterAltIcon />
-                        </IconButton>
-                            <Menu
-                                id="basic-menu"
-                                anchorEl={anchorEl}
-                                open={open}
-                                onClose={closeMenu}
-                                MenuListProps={{
-                                'aria-labelledby': 'basic-button',
-                                }}
-                            >
-                                <MenuItem onClick={closeMenu}> Activo <Checkbox   /></MenuItem>
-                                <MenuItem onClick={closeMenu}>My account</MenuItem>
-                                <MenuItem onClick={closeMenu}>Logout</MenuItem>
-                            </Menu> */}
+                    <Grid item xs={12} md={11}>
+                        <FormControl fullWidth variant="filled">
+                            <InputLabel htmlFor="filled-adornment-codigo" style={{ textAlign: "center", width: "100%" }}>BUSCAR POR CODIGO</InputLabel>
+                            <FilledInput
+                                hiddenLabel
+                                id="filled-adornment-identificacion"
+                                type="text"
+                                size="small"
+                                onChange={handleSearchId}
+                                endAdornment={
+                                    <InputAdornment position="end">
+                                        <IconButton
+                                            aria-label="toggle password visibility"
+                                            edge="end"
+                                        >
+                                            <SearchIcon />
+                                        </IconButton>
+                                    </InputAdornment>
+                                }
+                                label="Identificacion"
+                            />
+                        </FormControl>
+                    </Grid> 
                     </Grid>
                     
-                    {/* <Grid item xs={12} md={2}>
-                        <Button fullWidth color="anaranjado1" variant="contained" onClick={() => { setModalCategorias(true) }} startIcon={<AddIcon />} >Categorias</Button>
-                    </Grid> */}
-                    <Grid item xs={6} md={2}>
-                        <Button fullWidth variant="contained" onClick={() => { setModalProducto(true) }} startIcon={<AddIcon />} >Agregar Producto</Button>
-                    </Grid>
-                    <Grid item xs={6} md={2}>
-                        <Button fullWidth variant="contained" startIcon={<SettingsIcon />} color="gris" onClick={()=>{setModalOpciones(true)}} >Opciones</Button>
-                    </Grid>
-                    <Grid item xs={12}>
-                        <div style={{ height: 10 }}></div>
-                    </Grid>
                     <Grid item xs={12}>
                         <TableContainer sx={{ maxHeight: 440 }}>
                             <Table stickyHeader aria-label="sticky table">
@@ -368,7 +393,7 @@ export default function ProductosView() {
                                                         {row.valor_unitario}
                                                     </TableCell>
                                                     <TableCell align={"center"}>
-                                                      <BarcodeView value={row.codigo_principal}/>
+                                                        <BarcodeView value={row.codigo_principal} />
                                                     </TableCell>
                                                     <TableCell align={"center"}>
                                                         {row.stock}
@@ -432,23 +457,7 @@ export default function ProductosView() {
                                             setCodigoPrincipal(event.target.value);
                                         }}
                                     />
-                                </Grid> */}
-                                <Grid item md={4} xs={6}>
-                                    <FormControl fullWidth variant="filled">
-                                        <InputLabel htmlFor="filled-adornment-password">Tipo de Impuesto</InputLabel>
-                                        <Select
-                                            labelId="demo-simple-select-label"
-                                            value={tipoImpuesto}
-                                            label="Tipo de Persona"
-                                            onChange={(e)=>{setTipoImpuesto(e.target.value)}}
-                                        >
-                                            <MenuItem value={1}>IVA</MenuItem>
-                                            <MenuItem value={2}>SIN IVA</MenuItem>
-                                           
-                                        </Select>
-                                    </FormControl>
-                                </Grid>
-                               
+                                </Grid> */}                                
                                 <Grid item md={12} xs={12}>
                                     <TextField
                                         id="outlined-required"
@@ -461,7 +470,38 @@ export default function ProductosView() {
                                         }}
                                     />
                                 </Grid>
-                                <Grid item md={4} xs={6}>
+                                <Grid item md={6} xs={6}>
+                                    <FormControl fullWidth variant="filled">
+                                        <InputLabel htmlFor="filled-adornment-password">Tipo de Impuesto</InputLabel>
+                                        <Select
+                                            labelId="demo-simple-select-label"
+                                            value={tipoImpuesto}
+                                            label="Tipo de Persona"
+                                            onChange={(e) => { setTipoImpuesto(e.target.value) }}
+                                        >
+                                            <MenuItem value={1}>IVA</MenuItem>
+                                            <MenuItem value={2}>SIN IVA</MenuItem>
+
+                                        </Select>
+                                    </FormControl>
+                                </Grid>
+                                <Grid item md={6} xs={6}>
+                                    <FormControl fullWidth variant="filled">
+                                        <InputLabel htmlFor="filled-adornment-password">Tarifador IVA</InputLabel>
+                                        <Select
+                                            labelId="demo-simple-select-label"
+                                            value={tarifa}
+                                            label="Tipo de Persona"
+                                            onChange={(e) => { setTarifa(e.target.value) }}
+                                            disabled={tipoImpuesto === 1 ? false : true}
+                                        >
+                                            <MenuItem value={1}>13%</MenuItem>
+                                            <MenuItem value={2}>15%</MenuItem>
+
+                                        </Select>
+                                    </FormControl>
+                                </Grid>
+                                <Grid item md={6} xs={6}>
                                     <TextField
                                         id="outlined-required"
                                         label="Valor Unitario"
@@ -473,7 +513,7 @@ export default function ProductosView() {
 
                                     />
                                 </Grid>
-                                <Grid item md={4} xs={6}>
+                                <Grid item md={6} xs={6}>
                                     <TextField
                                         id="outlined-required"
                                         label="U.Medida"
@@ -484,22 +524,7 @@ export default function ProductosView() {
                                         }}
                                     />
                                 </Grid>
-                                <Grid item md={4} xs={6}>
-                                    <FormControl fullWidth variant="filled">
-                                        <InputLabel htmlFor="filled-adornment-password">Tarifador IVA</InputLabel>
-                                        <Select
-                                            labelId="demo-simple-select-label"
-                                            value={tarifa}
-                                            label="Tipo de Persona"
-                                            onChange={(e)=>{setTarifa(e.target.value)}}
-                                            disabled={tipoImpuesto === 1? false:true}
-                                        >
-                                            <MenuItem value={1}>13%</MenuItem>
-                                            <MenuItem value={2}>15%</MenuItem>
-
-                                        </Select>
-                                    </FormControl>
-                                </Grid>
+                                
                                 {/* <Grid item md={12} xs={6}>
                                     <Autocomplete
                                         disablePortal
@@ -517,7 +542,7 @@ export default function ProductosView() {
                                         renderInput={(params) => <TextField {...params} label="Tarifado ICE" />}
                                     />
                                 </Grid> */}
-                                
+
                             </Grid>
                         </CustomTabPanel>
                         <CustomTabPanel value={value} index={1}>
@@ -539,77 +564,7 @@ export default function ProductosView() {
                                     />
                                 </Grid>
 
-                                <Grid item xs={12}>
-                                    <h6 style={{ color: "#616A6B" }}>Datos Adicionales</h6>
-                                </Grid>
-                                <Grid item xs={6}>
-                                    <TextField
-                                        id="outlined-required"
-                                        label="Nombre"
-                                        fullWidth
-                                        value={param1}
-                                        onChange={(event) => {
-                                            setParam1(event.target.value);
-                                        }}
-                                    />
-                                </Grid>
-                                <Grid item xs={6}>
-                                    <TextField
-                                        id="outlined-required"
-                                        label="Valor"
-                                        fullWidth
-                                        value={value1}
-                                        onChange={(event) => {
-                                            setValue1(event.target.value);
-                                        }}
-                                        
-                                    />
-                                </Grid>
-                                <Grid item xs={6}>
-                                    <TextField
-                                        id="outlined-required"
-                                        label="Nombre"
-                                        fullWidth
-                                        value={param2}
-                                        onChange={(event) => {
-                                            setParam2(event.target.value);
-                                        }}
-                                    />
-                                </Grid>
-                                <Grid item xs={6}>
-                                    <TextField
-                                        id="outlined-required"
-                                        label="Valor"
-                                        fullWidth
-                                        value={value2}
-                                        onChange={(event) => {
-                                            setValue2(event.target.value);
-                                        }}
-
-                                    />
-                                </Grid>
-                                <Grid item xs={6}>
-                                    <TextField
-                                        id="outlined-required"
-                                        label="Nombre"
-                                        fullWidth
-                                        value={param3}
-                                        onChange={(event) => {
-                                            setParam3(event.target.value);
-                                        }}
-                                    />
-                                </Grid>
-                                <Grid item xs={6}>
-                                    <TextField
-                                        id="outlined-required"
-                                        label="Valor"
-                                        fullWidth
-                                        value={value3}
-                                        onChange={(event) => {
-                                            setValue3(event.target.value);
-                                        }}
-                                    />
-                                </Grid>
+                                
 
                             </Grid>
                         </CustomTabPanel>
@@ -618,13 +573,13 @@ export default function ProductosView() {
                                 <Grid item md={4} xs={12}>
                                     <FormControl>
                                         <FormLabel id="demo-row-radio-buttons-group-label">Llevar Inventario?</FormLabel>
-                                            <RadioGroup
-                                                row
-                                                aria-labelledby="demo-row-radio-buttons-group-label"
-                                                name="row-radio-buttons-group"
-                                                value={inventario}
-                                                onChange={handleInventario}
-                                            >
+                                        <RadioGroup
+                                            row
+                                            aria-labelledby="demo-row-radio-buttons-group-label"
+                                            name="row-radio-buttons-group"
+                                            value={inventario}
+                                            onChange={handleInventario}
+                                        >
                                             <FormControlLabel value={true} control={<Radio />} label="Si" />
                                             <FormControlLabel value={false} control={<Radio />} label="No" />
                                         </RadioGroup>
@@ -683,8 +638,8 @@ export default function ProductosView() {
                                         onChange={handleInputChange}
                                     />
                                 </Grid>
-                               
-                                <Grid item md={12} xs={12}>
+
+                                <Grid item md={6} xs={12}>
                                     <TextField
                                         id="outlined-required"
                                         label="Descripción"
@@ -694,7 +649,7 @@ export default function ProductosView() {
                                         onChange={handleInputChange}
                                     />
                                 </Grid>
-                                <Grid item md={4} xs={6}>
+                                <Grid item md={6} xs={6}>
                                     <TextField
                                         id="outlined-required"
                                         label="Valor Unitario"
@@ -705,7 +660,7 @@ export default function ProductosView() {
 
                                     />
                                 </Grid>
-                                <Grid item md={4} xs={6}>
+                                <Grid item md={6} xs={6}>
                                     <TextField
                                         id="outlined-required"
                                         label="U.Medida"
@@ -715,7 +670,7 @@ export default function ProductosView() {
                                         onChange={handleInputChange}
                                     />
                                 </Grid>
-                                <Grid item md={4} xs={6}>
+                                <Grid item md={6} xs={6}>
                                     <FormControl fullWidth variant="filled">
                                         <InputLabel htmlFor="filled-adornment-password">Tarifador IVA</InputLabel>
                                         <Select
@@ -725,29 +680,12 @@ export default function ProductosView() {
                                             name="tarifa_iva"
                                             onChange={handleInputChange}
                                         >
-                                            <MenuItem value={1}>0%</MenuItem>
-                                            <MenuItem value={2}>12%</MenuItem>
-                                            <MenuItem value={3}>No Objeto de impuesto</MenuItem>
-                                            <MenuItem value={4}>Extento de IVA</MenuItem>
-                                            <MenuItem value={5}>8%</MenuItem>
+                                            <MenuItem value={1}>13%</MenuItem>
+                                            <MenuItem value={2}>15%</MenuItem>                               
                                         </Select>
                                     </FormControl>
                                 </Grid>
-                                <Grid item md={8} xs={6}>
-                                    <Autocomplete
-                                        disablePortal
-                                        id="combo-box-demo"
-                                        name="ice"
-                                        options={data}
-                                        value={currentProducto.ice}
-                                        getOptionLabel={(option) =>
-                                            option.nombre
-                                        }
-                                        onChange={handleInputChange}
-                                        fullWidth
-                                        renderInput={(params) => <TextField {...params} label="Tarifado ICE" />}
-                                    />
-                                </Grid>
+                
                                 <Grid item md={4} xs={6}>
                                     <FormControl>
                                         <FormLabel id="demo-row-radio-buttons-group-label">Activo</FormLabel>
@@ -782,69 +720,6 @@ export default function ProductosView() {
                                         }}
                                         fullWidth
                                         renderInput={(params) => <TextField {...params} label="Establecimiento" />}
-                                    />
-                                </Grid>
-
-                                <Grid item xs={12}>
-                                    <h6 style={{ color: "#616A6B" }}>Datos Adicionales</h6>
-                                </Grid>
-                                <Grid item xs={6}>
-                                    <TextField
-                                        id="outlined-required"
-                                        label="Nombre"
-                                        fullWidth
-                                        value={currentProducto.param1}
-                                        name="param1"
-                                        onChange={handleInputChange}
-                                    />
-                                </Grid>
-                                <Grid item xs={6}>
-                                    <TextField
-                                        id="outlined-required"
-                                        label="Valor"
-                                        fullWidth
-                                        value={currentProducto.value1}
-                                        name="value1"
-                                        onChange={handleInputChange}
-
-                                    />
-                                </Grid>
-                                <Grid item xs={6}>
-                                    <TextField
-                                        id="outlined-required"
-                                        label="Nombre"
-                                        fullWidth
-                                        value={"param2"}
-                                        onChange={handleInputChange}
-
-                                    />
-                                </Grid>
-                                <Grid item xs={6}>
-                                    <TextField
-                                        id="outlined-required"
-                                        label="Valor"
-                                        fullWidth
-                                        value={"value2"}
-                                        onChange={handleInputChange}
-
-                                    />
-                                </Grid>
-                                <Grid item xs={6}>
-                                    <TextField
-                                        id="outlined-required"
-                                        label="Nombre"
-                                        fullWidth
-                                        value={"param3"}
-                                        onChange={handleInputChange}
-                                    />
-                                </Grid>
-                                <Grid item xs={6}>
-                                    <TextField
-                                        id="outlined-required"
-                                        label="Valor"
-                                        fullWidth
-                                        value={"value3"}
-                                        onChange={handleInputChange}
                                     />
                                 </Grid>
 
@@ -891,21 +766,21 @@ export default function ProductosView() {
                     </Button>
                 </ModalFooter>
             </Modal>
-            <Modal isOpen={modalOpciones}  size="sm"  >
+            <Modal isOpen={modalOpciones} size="sm"  >
                 <ModalHeader>Menu de Opciones </ModalHeader>
                 <ModalBody>
-                        <Grid container spacing={2}>
-                            <Grid item xs={12}>
-                                <Button fullWidth variant="contained" startIcon={<ArticleIcon/>} color="gris" >Descargar Plantilla </Button>
-                            </Grid>
-                         
-                            <Grid item xs={12}>
-                                <Button fullWidth variant="contained" startIcon={<CloudUploadIcon />}  color="verde">Subir Productos </Button>
-                            </Grid>
-                            <Grid item xs={12}>
-                                <Button fullWidth variant="contained" startIcon={<CloudDownloadIcon />} color="verde">Descargar Productos </Button>
-                            </Grid>
+                    <Grid container spacing={2}>
+                        <Grid item xs={12}>
+                            <Button fullWidth variant="contained" startIcon={<ArticleIcon />} color="gris" >Descargar Plantilla </Button>
                         </Grid>
+
+                        <Grid item xs={12}>
+                            <Button fullWidth variant="contained" startIcon={<CloudUploadIcon />} color="verde">Subir Productos </Button>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <Button fullWidth variant="contained" startIcon={<CloudDownloadIcon />} color="verde">Descargar Productos </Button>
+                        </Grid>
+                    </Grid>
                 </ModalBody>
                 <ModalFooter>
                     <Button color="secondary" onClick={() => { setModalOpciones(false) }} >
@@ -915,61 +790,61 @@ export default function ProductosView() {
             </Modal>
             <Modal isOpen={modalCategorias} >
                 <ModalHeader>Registrar Nueva Categoría</ModalHeader>
-                    <ModalBody>
-                       
-                            <Grid container spacing={2}>
-                                <Grid item xs={12}>
-                                    <TextField
-                                            id="outlined-required"
-                                            label="Nombre"
-                                            fullWidth
-                                            value={categoria}
-                                            inputProps={{ style: { textTransform: "uppercase" } }}
-                                            onChange={(event) => {
-                                            setCategoria(event.target.value);
-                                            }}
-                                        />
-                                    </Grid>
-                                    <Grid item xs={12}>
-                                        <Button fullWidth variant="contained" onClick={agregarCategorias} color="verde">Agregar Categoria </Button>
-                                    </Grid>
-                      
-                                
-                                    <Grid item xs={12}>
-                                        <TableContainer component={Paper}>
-                                            <Table aria-label="simple table">
-                                                <TableHead>
-                                                    <TableRow>
-                                                        <TableCell>Categorias</TableCell>
-                                                        <TableCell align="center"></TableCell>
-                                                    </TableRow>
-                                                </TableHead>
-                                                <TableBody>
-                                                    {categorias.map((row,index) => (
-                                                        <TableRow
-                                                        key={index}
-                                                        sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                                        >
-                                                
-                                                        <TableCell align="left">{row}</TableCell>
-                                                        <TableCell align="center">
-                                                            <IconButton aria-label="delete" color="rojo" onClick={()=>{eliminarCategoria(row)}}>
-                                                                <DeleteIcon />
-                                                            </IconButton>
-                                                        </TableCell>
-                                                        </TableRow>
-                                                    ))}
-                                                </TableBody>
-                                            </Table>
-                                        </TableContainer>
-                                    </Grid>
-                                </Grid>
-                       
-                    </ModalBody>
+                <ModalBody>
+
+                    <Grid container spacing={2}>
+                        <Grid item xs={12}>
+                            <TextField
+                                id="outlined-required"
+                                label="Nombre"
+                                fullWidth
+                                value={categoria}
+                                inputProps={{ style: { textTransform: "uppercase" } }}
+                                onChange={(event) => {
+                                    setCategoria(event.target.value);
+                                }}
+                            />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <Button fullWidth variant="contained" onClick={agregarCategorias} color="verde">Agregar Categoria </Button>
+                        </Grid>
+
+
+                        <Grid item xs={12}>
+                            <TableContainer component={Paper}>
+                                <Table aria-label="simple table">
+                                    <TableHead>
+                                        <TableRow>
+                                            <TableCell>Categorias</TableCell>
+                                            <TableCell align="center"></TableCell>
+                                        </TableRow>
+                                    </TableHead>
+                                    <TableBody>
+                                        {categorias.map((row, index) => (
+                                            <TableRow
+                                                key={index}
+                                                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                            >
+
+                                                <TableCell align="left">{row}</TableCell>
+                                                <TableCell align="center">
+                                                    <IconButton aria-label="delete" color="rojo" onClick={() => { eliminarCategoria(row) }}>
+                                                        <DeleteIcon />
+                                                    </IconButton>
+                                                </TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </TableContainer>
+                        </Grid>
+                    </Grid>
+
+                </ModalBody>
                 <ModalFooter>
-                <Button color="secondary" onClick={() => { setModalCategorias(false) }} >
+                    <Button color="secondary" onClick={() => { setModalCategorias(false) }} >
                         Salir
-                    </Button>              
+                    </Button>
                 </ModalFooter>
             </Modal>
         </>

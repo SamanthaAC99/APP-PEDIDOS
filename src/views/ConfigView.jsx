@@ -109,32 +109,6 @@ export default function ConfigView() {
         dispatch(setLoading(true));
         const user_ref = doc(db, "usuarios", userState.id);
         let user_copy = JSON.parse(JSON.stringify(userState))
-        let url_profile = ''
-        if (profileFile !== null) {
-            const spaceRef = ref(storage, `profiles/${profileFile.name}`);
-            await uploadBytes(spaceRef, profileFile).then(async (snapshot) => {
-                console.log('Uploaded an array!');
-                await getDownloadURL(snapshot.ref).then((downloadURL) => {
-                    console.log('File available at', downloadURL);
-                    url_profile = downloadURL
-                });
-            });
-            user_copy['profile'] = true
-            user_copy['profile_url'] = url_profile
-        } 
-        if (signatureFile !== null) {
-            const spaceRef = ref(storage, `firmas/${signatureFile.name}`);
-            await uploadBytes(spaceRef, signatureFile).then(async (snapshot) => {
-                console.log('Uploaded an array!');
-                await getDownloadURL(snapshot.ref).then((downloadURL) => {
-                    console.log('File available at', downloadURL);
-                    url_profile = downloadURL
-                });
-            });
-            user_copy['signature'] = true
-            user_copy['signature_url'] = url_profile
-            user_copy['signature_name'] = signatureFile.name
-        } 
         user_copy['contabilidad'] = contabilidad
         user_copy['ciudad'] = ciudad
         user_copy['direccion_ruc'] = direccionRuc
@@ -253,7 +227,7 @@ export default function ConfigView() {
   
     }
     useEffect(() => {
-        //dispatch(setLoading(false));
+        dispatch(setLoading(false));
         getData();
     }, []);
     return (
@@ -364,11 +338,11 @@ export default function ConfigView() {
                         </Grid>
 
                     </Grid>
-                    <Stack spacing={2}>
+                    {/* <Stack spacing={2}>
 
                         <ProfilePhoto condition={userState.profile} url={imagenURL !== null ? imagenURL : userState.profile_url} />
                         <FileUploadButton onFileUpload={handleFileUpload} />
-                    </Stack>
+                    </Stack> */}
                 </Stack>
                 <Grid container marginTop={4} spacing={1}>
                     <Grid item xs={12}>
@@ -454,7 +428,7 @@ export default function ConfigView() {
                     <Grid item xs={12} md={8}>
 
                     </Grid>
-                    <Grid item xs={12}>
+                    {/* <Grid item xs={12}>
                         <h5 style={{ textAlign: 'left', color: '#6C737F', marginTop: 7 }}>Configuración de la firma electronica</h5>
                     </Grid>
                     <Grid item xs={12}>
@@ -490,7 +464,7 @@ export default function ConfigView() {
                                 />
                             </FormControl>
                         </Stack>
-                    </Grid>
+                    </Grid> */}
                     <Grid item xs={12}>
                         <Button sx={{ marginTop: 5 }} onClick={actualizarDatos} variant="contained">GUARDAR CAMBIOS</Button>
                     </Grid>

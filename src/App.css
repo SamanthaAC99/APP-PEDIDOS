@@ -146,3 +146,18 @@
     transform: rotate(360deg);
   }
 }
+
+
+.factura-container1 {
+  display: flex;
+  flex-direction: row;
+}
+
+.factura-imagen1 {
+  width: 50%; /* Ajusta el tamaño de la imagen según sea necesario */
+}
+
+.imagen1 {
+  width: 50%;
+  height: auto; /* Esto mantiene la proporción de la imagen */
+}

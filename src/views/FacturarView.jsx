@@ -4,6 +4,7 @@ import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import dayjs from 'dayjs';
+import Swal from 'sweetalert2';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -70,12 +71,13 @@ import { generarFacturaXML } from "../scripts/generar-xml";
 
 export default function FacturasView() {
     const userState = useSelector(state => state.auth);
+    console.log("USE",userState)
     const [value, setValue] = useState(dayjs(new Date()));
     const [productos, setProductos] = useState([])
     const [modalCliente, setModalCliente] = useState(false);
     let consumidor_final = {
-        ci: 999999999999,
-        nombre:"CONSUMIDOR FINAL",
+        ci: userState.ruc,
+        nombre:userState.razon,
         correos:[userState.email],
         phone:userState.phone,
         direccion:userState.direcciones[0].direccion,
@@ -84,6 +86,7 @@ export default function FacturasView() {
         
     }
     const [currentCliente, setCurrentCliente] = useState(consumidor_final);
+    console.log("CC",currentCliente)
     const [modalProducto, setModalProducto] = useState(false);
     const [items, setItems] = useState([{}]);
     const [page, setPage] = useState(0);
@@ -402,8 +405,9 @@ export default function FacturasView() {
         dispatch(setLoading(true));
         let aux_productos =  JSON.parse(JSON.stringify(productos));
         let user_copy = JSON.parse(JSON.stringify(userState))
-        let factura_data = {}
-        let id = uuidv4();
+        // let factura_data = {}
+        // let id = uuidv4();
+        // console.log(id)
         const user_ref = doc(db, "usuarios", userState.id);
         let impuestos_data = []
         if(aux_productos.length >0){
@@ -469,7 +473,7 @@ export default function FacturasView() {
             let data_clave = {
                 fecha:dia+mes+año,
                 tipo:'01',
-                ruc:currentCliente.ci+'001',
+                ruc:currentCliente.ruc+'001',
                 tipo_ambiente:1,
                 serie:userState.bill_code1+userState.bill_code2,
                 comprobante:userState.bill_code3,
@@ -479,11 +483,12 @@ export default function FacturasView() {
             var fechaFormateada = dia + '/' + mes + '/' + año;
             let number_proforma =  `${userState.bill_code1}-${userState.bill_code2}-${userState.bill_code3}`
             let contabilidad_txt = userState.contabilidad ?  "SI":"NO"
-            factura_data = {
+            let factura_data = {
                 products: products_formated,
-                profile: userState.profile,
+                // profile: userState.profile,
                 // profile_url: userState.profile_url,  
                 nombre: currentCliente.nombre,
+                ci:currentCliente.ci,
                 fecha: fechaFormateada,
                 sub_quince:subQuince,
                 sub_iva:subIva,
@@ -491,7 +496,6 @@ export default function FacturasView() {
                 sub_zero:subZero,
                 total:total,
                 iva:iva,
-                ci:currentCliente.ci,
                 descuento:0,
                 ice:0,
                 matriz:currentEstablecimiento.direccion,
@@ -500,33 +504,56 @@ export default function FacturasView() {
                 contabilidad: contabilidad_txt,
                 contribuyente_especial: "120231",
                 estado:"pendiente",
-                id:id,
+                // id:id,
                 numero_proforma:number_proforma,
                 secuencial:userState.bill_code3,
                 metodo_pago:pago,
                 estado:1,
                 correos:currentCliente.correos,
-                email:currentCliente.email,
+                // email:currentCliente.email,
                 phone:currentCliente.phone,
                 direccion:currentCliente.direccion,
-                observaciones:currentCliente.observaciones,
+                // observaciones:currentCliente.observaciones,
                 razon:currentCliente.nombre,
                 nombre_facturador:userState.razon,
                 punto_emision: userState.bill_code2,
                 nombre_comercial:currentEstablecimiento.nombreComercial
                 
             }
+            
+            try {
+                const id = uuidv4();
+                factura_data.id = id;
+                Swal.fire({
+                    title: 'Confirmación de Cliente',
+                    // html: clienteInfo,
+                    icon: 'info',
+                    showCancelButton: true,
+                    confirmButtonText: 'Aceptar',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        setDoc(doc(db, "facturas", id), factura_data);
+                        console.log("Factura agregada correctamente con el ID:", id);
+                        Swal.fire({
+                            title: 'Pedido agregado',
+                            html: '<i class="fas fa-check-circle" style="color:green;"></i>',
+                            icon: 'success'
+                        });
+                    } else {
+                     console.log("El usuario canceló")
+                    }
+                });
+            } catch (error) {
+                console.error("Error al agregar la factura:", error);
+            }
+
+            
+            // console.log(id)
             console.log(factura_data)
-        }
-        if(_case === 1 ){
-            await setDoc(doc(db, "facturas", id), factura_data);
-            setProductos([]);
             dispatch(setLoading(false));
-        }else{
-            generarFacturaPDF(factura_data);
         }
        
-        dispatch(setLoading(false));
     }
 
     //const seleccionar
@@ -540,18 +567,18 @@ export default function FacturasView() {
         <>
             <Container maxWidth="xl">
                 <Grid container spacing={2}>
-                    <Grid item xs={12}>
+                    {/* <Grid item xs={12}>
                         <div className="header-dash">
                             Sistema de generación de facturas.
                         </div>
-                    </Grid>
+                    </Grid> */}
                     <Grid item xs={12}>
                         <div className="proforma-container">
                             <div>
-                                <p className="proforma-titulo" style={{ margin: 0 }}> <strong>FACTURAS</strong></p>
+                                <p className="proforma-titulo" style={{ margin: 0 }}> <strong>PEDIDOS DE VENTAS</strong></p>
                             </div>
                             <div>
-                                <p style={{ margin: 0 }} className="proforma-datos">Joan David Encarnacion Diaz <strong>1104595671 .- MECDEVS SAS</strong> </p>
+                                <p style={{ margin: 0 }} className="proforma-datos">CONORQUE CIA LTDA <strong>RUC:01903862</strong> </p>
                             </div>
                         </div>
 
@@ -769,9 +796,9 @@ export default function FacturasView() {
 
                     </Grid>
                    
-                    <Grid item xs={12} md={0.5}>
+                    {/* <Grid item xs={12} md={0.5}>
                     
-                    </Grid>
+                    </Grid> */}
                     <Grid item xs={12} md={8}>
                         
                         </Grid>
