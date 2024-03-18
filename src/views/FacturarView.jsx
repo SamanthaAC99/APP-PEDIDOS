@@ -400,161 +400,185 @@ export default function FacturasView() {
         setCurrentCliente(_data)
         setModalCliente(false)
     }
+ 
+    const agregarFactura = async (_case) => {
+        dispatch(setLoading(true)); // Inicia la carga
     
-    const agregarFactura = async(_case)=>{
-        dispatch(setLoading(true));
-        let aux_productos =  JSON.parse(JSON.stringify(productos));
-        let user_copy = JSON.parse(JSON.stringify(userState))
-        // let factura_data = {}
-        // let id = uuidv4();
-        // console.log(id)
-        const user_ref = doc(db, "usuarios", userState.id);
-        let impuestos_data = []
-        if(aux_productos.length >0){
-            let products_formated = aux_productos.map((item)=>{
-                return {
-                        codigo:item.codigo_principal,
-                        descripcion:item.descripcion,
-                        cantidad:item.cantidad,
-                        valor_unitario:item.valor_unitario,
-                        descuento:0,
-                        precio_total:parseFloat(item.valor_unitario)*parseFloat(item.cantidad),
-                        tipo_impuesto:item.tipo_impuesto,
-                        ice:item.ice,
-                        tarifa_iva:item.tarifa_iva
+        // Clona los productos y el estado del usuario para trabajar con copias
+        let aux_productos = JSON.parse(JSON.stringify(productos));
+        let user_copy = JSON.parse(JSON.stringify(userState));
+    
+        // Declara e inicializa la variable para los productos formateados
+        let products_formated = [];
+    
+        // Declara e inicializa las variables para los impuestos
+        let impuestos_data = [];
+    
+        // Verifica si hay productos disponibles
+        if (aux_productos.length > 0) {
+            // Formatea los productos para la factura
+            products_formated = aux_productos.map((item) => ({
+                codigo: item.codigo_principal,
+                descripcion: item.descripcion,
+                cantidad: item.cantidad,
+                valor_unitario: item.valor_unitario,
+                descuento: 0,
+                precio_total: parseFloat(item.valor_unitario) * parseFloat(item.cantidad),
+                tipo_impuesto: item.tipo_impuesto,
+                ice: item.ice,
+                tarifa_iva: item.tarifa_iva
+            }));
+    
+            // Calcula los impuestos
+            let twelve = 0;
+            let zero = 0;
+            aux_productos.forEach((item) => {
+                if (item.tipo_impuesto === 2) {
+                    if (item.tarifa_iva === 1) {
+                        twelve += parseFloat(item.valor_unitario);
                     }
-            })
-            let twelve = 0
-            let zero = 0
-            aux_productos.forEach((item)=>{
-                if(item.tipo_impuesto === 2 ){
-                    if(item.tarifa_iva === 1){
-                        twelve += parseFloat(item.valor_unitario)
-                    }
-                }else if(item.tipo_impuesto === 3 ){
-                    zero += parseFloat(item.valor_unitario)
+                } else if (item.tipo_impuesto === 3) {
+                    zero += parseFloat(item.valor_unitario);
                 }
-            })
-            if(twelve !== 0 ){
+            });
+    
+            // Agrega los impuestos al array
+            if (twelve !== 0) {
                 impuestos_data.push({
-                    codigo:2,
-                    tipo_impuesto:2,
+                    codigo: 2,
+                    tipo_impuesto: 2,
                     base: twelve,
                     valor: twelve * 0.12
-
-                })
+                });
             }
-            if(zero !== 0){
+            if (zero !== 0) {
                 impuestos_data.push({
-                    codigo:2,
-                    tipo_impuesto:0,
+                    codigo: 2,
+                    tipo_impuesto: 0,
                     base: zero,
                     valor: zero * 0.12
-
-                })
+                });
             }
-        
-            console.log("lista de impuestos: ",impuestos_data);
-
-
+    
+            // Genera la fecha formateada
             let fecha_formated = new Date(value);
-        
             var dia = fecha_formated.getDate().toString();
-            var mes = fecha_formated.getMonth() + 1; 
+            var mes = fecha_formated.getMonth() + 1;
             var año = fecha_formated.getFullYear().toString();
-            mes = mes.toString()
-            if(dia<9){
-                dia = '0'+dia
+            mes = mes.toString();
+            if (dia < 9) {
+                dia = '0' + dia;
             }
-            if(mes<9){
-                mes = '0'+mes
-            }
-            
-            let data_clave = {
-                fecha:dia+mes+año,
-                tipo:'01',
-                ruc:currentCliente.ruc+'001',
-                tipo_ambiente:1,
-                serie:userState.bill_code1+userState.bill_code2,
-                comprobante:userState.bill_code3,
-                tipo_emision:1,
-                
+            if (mes < 9) {
+                mes = '0' + mes;
             }
             var fechaFormateada = dia + '/' + mes + '/' + año;
-            let number_proforma =  `${userState.bill_code1}-${userState.bill_code2}-${userState.bill_code3}`
-            let contabilidad_txt = userState.contabilidad ?  "SI":"NO"
+    
+            // Genera el número de proforma
+            let number_proforma = `${userState.bill_code1}-${userState.bill_code2}-${userState.bill_code3}`;
+    
+            // Prepara los datos de la factura
             let factura_data = {
                 products: products_formated,
-                // profile: userState.profile,
-                // profile_url: userState.profile_url,  
                 nombre: currentCliente.nombre,
-                ci:currentCliente.ci,
+                ci: currentCliente.ci,
                 fecha: fechaFormateada,
-                sub_quince:subQuince,
-                sub_iva:subIva,
-                sub_total:subtotal,
-                sub_zero:subZero,
-                total:total,
-                iva:iva,
-                descuento:0,
-                ice:0,
-                matriz:currentEstablecimiento.direccion,
-                sucursal:currentEstablecimiento.direccion,
-                codigo_establecimiento:currentEstablecimiento.codigo,
-                contabilidad: contabilidad_txt,
+                sub_quince: subQuince,
+                sub_iva: subIva,
+                sub_total: subtotal,
+                sub_zero: subZero,
+                total: total,
+                iva: iva,
+                descuento: 0,
+                ice: 0,
+                matriz: currentEstablecimiento.direccion,
+                sucursal: currentEstablecimiento.direccion,
+                codigo_establecimiento: currentEstablecimiento.codigo,
+                contabilidad: userState.contabilidad ? "SI" : "NO",
                 contribuyente_especial: "120231",
-                estado:"pendiente",
-                // id:id,
-                numero_proforma:number_proforma,
-                secuencial:userState.bill_code3,
-                metodo_pago:pago,
-                estado:1,
-                correos:currentCliente.correos,
-                // email:currentCliente.email,
-                phone:currentCliente.phone,
-                direccion:currentCliente.direccion,
-                // observaciones:currentCliente.observaciones,
-                razon:currentCliente.nombre,
-                nombre_facturador:userState.razon,
+                estado: "pendiente",
+                numero_proforma: number_proforma,
+                secuencial: userState.bill_code3,
+                metodo_pago: pago,
+                estado: 1,
+                correos: currentCliente.correos,
+                phone: currentCliente.phone,
+                direccion: currentCliente.direccion,
+                razon: currentCliente.nombre,
+                nombre_facturador: userState.razon,
                 punto_emision: userState.bill_code2,
-                nombre_comercial:currentEstablecimiento.nombreComercial
-                
-            }
-            
-            try {
-                const id = uuidv4();
-                factura_data.id = id;
-                Swal.fire({
-                    title: 'Confirmación de Cliente',
-                    // html: clienteInfo,
-                    icon: 'info',
-                    showCancelButton: true,
-                    confirmButtonText: 'Aceptar',
-                    cancelButtonText: 'Cancelar'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        setDoc(doc(db, "facturas", id), factura_data);
-                        console.log("Factura agregada correctamente con el ID:", id);
-                        Swal.fire({
-                            title: 'Pedido agregado',
-                            html: '<i class="fas fa-check-circle" style="color:green;"></i>',
-                            icon: 'success'
-                        });
-                    } else {
-                     console.log("El usuario canceló")
-                    }
+                nombre_comercial: currentEstablecimiento.nombreComercial
+            };
+    
+            // Verifica si hay suficiente stock para cada producto
+            let stockInsuficiente = false;
+            aux_productos.forEach((item) => {
+                if (item.stock < item.cantidad) {
+                    stockInsuficiente = true;
+                }
+            });
+    
+            // Si hay stock suficiente, procedemos a agregar la factura
+            if (!stockInsuficiente) {
+                // Resta la cantidad de productos vendidos al stock en la base de datos
+                aux_productos.forEach((item) => {
+                    const productRef = doc(db, "productos", item.id);
+                    const newStock = item.stock - item.cantidad;
+                    updateDoc(productRef, { stock: newStock });
                 });
-            } catch (error) {
-                console.error("Error al agregar la factura:", error);
+    
+                // Continuamos con el resto de la función para agregar la factura...
+                // (Código omitido para mantener la brevedad)
+    
+                // Intenta agregar la factura a la base de datos
+                try {
+                    const id = uuidv4();
+                    factura_data.id = id;
+    
+                    // Muestra un mensaje de confirmación al usuario antes de agregar la factura
+                    Swal.fire({
+                        title: 'Confirmación de Cliente',
+                        icon: 'info',
+                        showCancelButton: true,
+                        confirmButtonText: 'Aceptar',
+                        cancelButtonText: 'Cancelar'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            // Agrega la factura a la base de datos si el usuario confirma
+                            setDoc(doc(db, "facturas", id), factura_data);
+                            console.log("Factura agregada correctamente con el ID:", id);
+    
+                            // Muestra un mensaje de éxito al usuario
+                            Swal.fire({
+                                title: 'Pedido agregado',
+                                html: '<i class="fas fa-check-circle" style="color:green;"></i>',
+                                icon: 'success'
+                            });
+                        } else {
+                            console.log("El usuario canceló")
+                        }
+                    });
+                } catch (error) {
+                    console.error("Error al agregar la factura:", error);
+                }
+    
+                // Finaliza la carga
+                dispatch(setLoading(false));
+            } else {
+                // Si hay stock insuficiente, muestra un mensaje de error al usuario
+                Swal.fire({
+                    title: 'Stock insuficiente',
+                    text: 'No hay suficiente stock disponible para algunos productos.',
+                    icon: 'error'
+                });
+    
+                // Finaliza la carga
+                dispatch(setLoading(false));
             }
-
-            
-            // console.log(id)
-            console.log(factura_data)
-            dispatch(setLoading(false));
         }
-       
-    }
+    };
+    
+    
 
     //const seleccionar
 
