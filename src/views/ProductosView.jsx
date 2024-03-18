@@ -297,7 +297,7 @@ export default function ProductosView() {
                           
                           <Grid container item xs={5} justifyContent="center" spacing={2}>
                         <Grid container item xs={12} md={7} justifyContent="center">
-                            <Button style={{ width: "100%", height: "50%" }} variant="contained" startIcon={<AddIcon />} onClick={() => { setModalProducto(true) }}>Agregar Cliente</Button>
+                            <Button style={{ width: "100%", height: "50%" }} variant="contained" startIcon={<AddIcon />} onClick={() => { setModalProducto(true) }}>Agregar Producto</Button>
                         </Grid>
                         {/* <Grid container item xs={12} md={6} justifyContent="center">
                             <Button style={{ width: "100%", height: "50%" }} variant="contained" startIcon={<SettingsIcon />} color="gris" onClick={() => { setModalOpciones(true) }}>Opciones</Button>
