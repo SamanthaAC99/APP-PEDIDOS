@@ -61,7 +61,7 @@ export default function TablaProformasView(){
                                     <p className="proforma-titulo" style={{ margin: 0 }}> <strong>TABLAS DE PROFORMAS</strong></p>
                                 </div>
                                 <div>
-                                    <p style={{ margin: 0 }} className="proforma-datos">Joan David Encarnacion Diaz <strong>1104595671 .- MECDEVS SAS</strong> </p>
+                                    <p style={{ margin: 0 }} className="proforma-datos"> <strong>1CONORQUE CIA LTDA RUC:01903862</strong> </p>
                                 </div>
                             </div>
                         </Grid>

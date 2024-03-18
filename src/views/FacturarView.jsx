@@ -403,20 +403,14 @@ export default function FacturasView() {
  
     const agregarFactura = async (_case) => {
         dispatch(setLoading(true)); // Inicia la carga
-    
-        // Clona los productos y el estado del usuario para trabajar con copias
         let aux_productos = JSON.parse(JSON.stringify(productos));
         let user_copy = JSON.parse(JSON.stringify(userState));
-    
-        // Declara e inicializa la variable para los productos formateados
+
         let products_formated = [];
-    
-        // Declara e inicializa las variables para los impuestos
         let impuestos_data = [];
     
-        // Verifica si hay productos disponibles
+        // Verificar si hay productos disponibles
         if (aux_productos.length > 0) {
-            // Formatea los productos para la factura
             products_formated = aux_productos.map((item) => ({
                 codigo: item.codigo_principal,
                 descripcion: item.descripcion,
@@ -429,7 +423,6 @@ export default function FacturasView() {
                 tarifa_iva: item.tarifa_iva
             }));
     
-            // Calcula los impuestos
             let twelve = 0;
             let zero = 0;
             aux_productos.forEach((item) => {
@@ -442,7 +435,7 @@ export default function FacturasView() {
                 }
             });
     
-            // Agrega los impuestos al array
+            // Agregar los impuestos al array
             if (twelve !== 0) {
                 impuestos_data.push({
                     codigo: 2,
@@ -460,7 +453,6 @@ export default function FacturasView() {
                 });
             }
     
-            // Genera la fecha formateada
             let fecha_formated = new Date(value);
             var dia = fecha_formated.getDate().toString();
             var mes = fecha_formated.getMonth() + 1;
@@ -474,10 +466,8 @@ export default function FacturasView() {
             }
             var fechaFormateada = dia + '/' + mes + '/' + año;
     
-            // Genera el número de proforma
             let number_proforma = `${userState.bill_code1}-${userState.bill_code2}-${userState.bill_code3}`;
     
-            // Prepara los datos de la factura
             let factura_data = {
                 products: products_formated,
                 nombre: currentCliente.nombre,
@@ -510,7 +500,7 @@ export default function FacturasView() {
                 nombre_comercial: currentEstablecimiento.nombreComercial
             };
     
-            // Verifica si hay suficiente stock para cada producto
+            // Verificar si hay suficiente stock para cada producto
             let stockInsuficiente = false;
             aux_productos.forEach((item) => {
                 if (item.stock < item.cantidad) {
@@ -518,24 +508,17 @@ export default function FacturasView() {
                 }
             });
     
-            // Si hay stock suficiente, procedemos a agregar la factura
             if (!stockInsuficiente) {
-                // Resta la cantidad de productos vendidos al stock en la base de datos
                 aux_productos.forEach((item) => {
                     const productRef = doc(db, "productos", item.id);
                     const newStock = item.stock - item.cantidad;
                     updateDoc(productRef, { stock: newStock });
                 });
     
-                // Continuamos con el resto de la función para agregar la factura...
-                // (Código omitido para mantener la brevedad)
-    
-                // Intenta agregar la factura a la base de datos
                 try {
                     const id = uuidv4();
                     factura_data.id = id;
     
-                    // Muestra un mensaje de confirmación al usuario antes de agregar la factura
                     Swal.fire({
                         title: 'Confirmación de Cliente',
                         icon: 'info',
@@ -544,11 +527,8 @@ export default function FacturasView() {
                         cancelButtonText: 'Cancelar'
                     }).then((result) => {
                         if (result.isConfirmed) {
-                            // Agrega la factura a la base de datos si el usuario confirma
                             setDoc(doc(db, "facturas", id), factura_data);
                             console.log("Factura agregada correctamente con el ID:", id);
-    
-                            // Muestra un mensaje de éxito al usuario
                             Swal.fire({
                                 title: 'Pedido agregado',
                                 html: '<i class="fas fa-check-circle" style="color:green;"></i>',
@@ -561,11 +541,9 @@ export default function FacturasView() {
                 } catch (error) {
                     console.error("Error al agregar la factura:", error);
                 }
-    
-                // Finaliza la carga
+
                 dispatch(setLoading(false));
             } else {
-                // Si hay stock insuficiente, muestra un mensaje de error al usuario
                 Swal.fire({
                     title: 'Stock insuficiente',
                     text: 'No hay suficiente stock disponible para algunos productos.',

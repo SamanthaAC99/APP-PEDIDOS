@@ -152,7 +152,7 @@ export default function ServiciosView(){
                                     <p className="proforma-titulo" style={{ margin: 0 }}> <strong>TABLAS DE SERVICIOS</strong></p>
                                 </div>
                                 <div>
-                                    <p style={{ margin: 0 }} className="proforma-datos">Joan David Encarnacion Diaz <strong>1104595671 .- MECDEVS SAS</strong> </p>
+                                    <p style={{ margin: 0 }} className="proforma-datos"><strong>CONORQUE CIA LTDA RUC:01903862</strong> </p>
                                 </div>
                             </div>
                         </Grid>
